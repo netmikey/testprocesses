@@ -122,6 +122,7 @@ public void testSomethingThatRequiresMyTestProcess() {
 ```
 
 > **Warning**
+>
 > Make sure to enable AutoConfiguration in your Spring test context (e.g. by making sure you have `@EnableAutoConfiguration` declared).
 
 There are a couple of ways to reference a `TestProcessDefinition`. Referencing it by its class will have TestProcesses look into the Spring Test Context to find a bean of that type (that's why we added `@Component` on `MyTestProcess` above).
