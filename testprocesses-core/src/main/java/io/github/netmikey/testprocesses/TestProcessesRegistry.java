@@ -55,6 +55,8 @@ public class TestProcessesRegistry {
      *            started.
      * @param startStrategy
      *            The {@link StartStrategy} to be used.
+     * @param <T>
+     *            The concrete type of the {@link TestProcessDefinition}.
      */
     public <T extends TestProcessDefinition> void start(TestProcessDefinitionBy<T> processDefinitionBy,
         StartStrategy startStrategy) {
@@ -380,6 +382,8 @@ public class TestProcessesRegistry {
      * @return The {@link RunningTestProcess} or {@link Optional#empty()} if no
      *         process has been started that matches the specified
      *         {@link TestProcessDefinitionBy} reference.
+     * @param <T>
+     *            The concrete type of the {@link TestProcessDefinition}.
      */
     public <T extends TestProcessDefinition> Optional<RunningTestProcess<T>> retrieveRunningProcess(
         TestProcessDefinitionBy<T> testProcessDefinitionBy) {

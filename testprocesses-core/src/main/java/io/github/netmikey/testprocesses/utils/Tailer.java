@@ -47,8 +47,8 @@ import java.util.Objects;
  * <li>Using one of the static helper methods:
  * <ul>
  * <li>{@link Tailer#create(File, TailerListener)}</li>
- * <li>{@link Tailer#create(File, TailerListener, long)}</li>
- * <li>{@link Tailer#create(File, TailerListener, long, boolean)}</li>
+ * <li>{@link Tailer#create(File, TailerListener, long, long)}</li>
+ * <li>{@link Tailer#create(File, TailerListener, long, long, boolean)}</li>
  * </ul>
  * </li>
  * <li>Using an {@link java.util.concurrent.Executor}</li>

@@ -41,6 +41,8 @@ public class TestProcessDefinitionBy<T extends TestProcessDefinition> {
      * @param testProcessDefinitionClass
      *            The concrete {@link TestProcessDefinition} implementation
      *            class.
+     * @param <C>
+     *            The concrete {@link TestProcessDefinition} type.
      * @return The {@link TestProcessDefinitionBy} reference to the clazz.
      */
     public static <C extends TestProcessDefinition> TestProcessDefinitionBy<C> clazz(
@@ -55,6 +57,8 @@ public class TestProcessDefinitionBy<T extends TestProcessDefinition> {
      * 
      * @param testProcessDefinition
      *            The {@link TestProcessDefinition} instance.
+     * @param <I>
+     *            The concrete {@link TestProcessDefinition} type.
      * @return The {@link TestProcessDefinitionBy} reference to the instance.
      */
     public static <I extends TestProcessDefinition> TestProcessDefinitionBy<I> instance(I testProcessDefinition) {
