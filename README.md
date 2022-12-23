@@ -121,6 +121,9 @@ public void testSomethingThatRequiresMyTestProcess() {
 }
 ```
 
+> **Warning**
+> Make sure to enable AutoConfiguration in your Spring test context (e.g. by making sure you have `@EnableAutoConfiguration` declared).
+
 There are a couple of ways to reference a `TestProcessDefinition`. Referencing it by its class will have TestProcesses look into the Spring Test Context to find a bean of that type (that's why we added `@Component` on `MyTestProcess` above).
 
 It is also possible to use the Spring bean name (note that when using `@Component`, Spring uses the lowercased classname as bean name, which is what we use here):
@@ -183,6 +186,7 @@ The `TestProcessesRegistry` has methods for starting and stopping test processes
 import static io.github.netmikey.testprocesses.TestProcessDefinitionBy.*;
 
 @SpringBootTest
+@EnableAutoConfiguration
 public class MyTest {
 
     @Autowired
