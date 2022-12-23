@@ -1,6 +1,7 @@
 TestProcesses
 =============
 
+[![Build Status](https://github.com/netmikey/testprocesses/actions/workflows/build.yaml/badge.svg)](https://github.com/netmikey/testprocesses/actions)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.netmikey.testprocesses/testprocesses-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.netmikey.testprocesses/testprocesses-core)
 
 A Java library that manages the lifecycle of applications/programs (processes) needed during testing.
