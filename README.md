@@ -104,12 +104,12 @@ In the constructor, we configure a "startupDetector". StartupDetector and Shutdo
   - `TcpPortEventDetector`: detects when a given port has been opened or closed.
   - `RecursiveProcessTerminationEventDetector`: detects when a test process has stopped running. This EventDetector is used by default as ShutdownDetector in `AbstractTestProcessDefinition`.
 
-In the example above, we tell TestProcesses that whenever it starts the `MyTestProcess` definition, it should block and wait for the process to print the string "My process has started" on its stdOut stream before contining the tests.
+In the example above, we tell TestProcesses that whenever it starts the `MyTestProcess` definition, it should block and wait for the process to print the string "My process has started" on its stdOut stream before continuing the tests.
 
 Finally, note the presence of Spring's `@Component` annotation. Using this annotation will create an instance of the `MyTestProcess` definition and register it as singleton in Spring's test context. Registering a definition as Spring bean is one way to have TestProcesses find it when we want to use it later.
 
 
-### Useing a test process for a test
+### Using a test process for a test
 
 Once a TestProcessDefinition has been created, we can tell TestProcesses to make sure it is running before starting a given test method:
 
@@ -123,7 +123,7 @@ public void testSomethingThatRequiresMyTestProcess() {
 
 > **Warning**
 >
-> Make sure to enable AutoConfiguration in your Spring test context (e.g. by making sure you have `@EnableAutoConfiguration` declared).
+> Make sure to enable [auto-configuration](https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.auto-configuration) in your Spring test context (e.g. by making sure you have [`@EnableAutoConfiguration`](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/EnableAutoConfiguration.html) declared).
 
 There are a couple of ways to reference a `TestProcessDefinition`. Referencing it by its class will have TestProcesses look into the Spring Test Context to find a bean of that type (that's why we added `@Component` on `MyTestProcess` above).
 
