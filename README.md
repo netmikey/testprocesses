@@ -62,9 +62,13 @@ TestProcesses enables managing one or more of these "test processes" for your te
 
 ## Installation
 
-Add TestProcesses to your project's dependencies by declaring `io.github.netmikey.testprocesses:testprocesses-core` as a test-compile-time dependency:
+TestProcesses is available as library in [Maven Central](https://search.maven.org/search?q=g:io.github.netmikey.testprocesses). Add TestProcesses to your project's dependencies by declaring a test-compile-time dependency:
 
 ```gradle
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     testImplementation("io.github.netmikey.testprocesses:testprocesses-core:1.0.0")
 }
@@ -145,24 +149,27 @@ Using the `@TestProcess` annotation wil have TestProcesses start the targetted `
 If you need more control over when a test process is stopped and/or restarted, you can specify that in the annotation:
 
 ```java
-// The test process will be stopped immediately after this test method
+// The test process will be stopped immediately
+// after this test method
 @TestProcess(
     beanClass = MyTestProcess.class,
     stopStrategy = StopStrategy.STOP_AFTER_TEST)
 
-// Even if the test process is already running, stop and restart it before starting this test
+// Even if the test process is already running,
+// stop and restart it before starting this test
 @TestProcess(
     beanClass = MyTestProcess.class,
     startStrategy = StartStrategy.REQUIRE_RESTART)
 
-// Make sure to (re-)start the test process before this test and to stop it immediately after this test
+// Make sure to (re-)start the test process before
+// this test and to stop it immediately after this test
 @TestProcess(
     beanClass = MyTestProcess.class,
     startStrategy = StartStrategy.REQUIRE_RESTART,
     stopStrategy = StopStrategy.STOP_AFTER_TEST)
 ```
 
-For even more fine-grained control, you will need to use the API.
+For even more fine-grained control, you will need to [use the API](#using-the-api).
 
 
 ### Test process identifiers
@@ -231,7 +238,7 @@ public class MyTest {
 }
 ```
 
-For more examples, see the functional tests in the `testprocesses-core` module.
+For more examples, see the [functional tests](https://github.com/netmikey/testprocesses/tree/main/testprocesses-core/src/test/java/io/github/netmikey/testprocesses/functional) in the `testprocesses-core` module.
 
 
 ## Limitations
