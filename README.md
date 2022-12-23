@@ -85,7 +85,7 @@ Before you can use a test-process, you will have to define it. To do so, you hav
 @Component
 public class MyTestProcess extends AbstractTestProcessDefinition {
 
-    public EchoTestProcess() {
+    public MyTestProcess() {
         setStartupDetector(LogPatternEventDetector
             .onStdOut()
             .withMarker("My process has started"));
