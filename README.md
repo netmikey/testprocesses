@@ -44,10 +44,10 @@ TestProcesses enables managing one or more of these "test processes" for your te
 
   - Declarative and imperative using annotations or a Java API
   - Test processes can be anything the OS can run
-  - A single test process only has to be defined one and can be reused by as many tests as neccessary
+  - A single test process only has to be defined once and can be reused by as many tests as neccessary
   - A test-process is automatically started before a test if it is not running yet
   - All running test-processes are automatically shut down (destroyed) before the JVM (or more precisely: Spring's Test Context) is shut down
-  - Different mechanisms can be used for detecting when a process has finished starting up and shutting down (e.g. TCP Port, Test/pattern in Log-File or stdOut/stdErr,...)
+  - Different mechanisms can be used for detecting when a process has finished starting up and shutting down (e.g. TCP Port, text/pattern in logfile or stdOut/stdErr,...)
   - Fine-grained control about whether a test process should continue running or be stopped / restarted between test methods
   - A test process' stdOut/stdErr streams can be easily obtained to run assertions. Either the full stream (since the process started) can be returned or just the specific part that has been written during the current test method.
   - It is possible to block the test thread while waiting for an event on the test-process (e.g. a log message on stdOut/stdErr/logFile, a TCP Port to be opened/closed,...)
@@ -79,7 +79,7 @@ dependencies {
 
 ### Defining a test process
 
-Before you can use a test-process, you will have to define it. To do so, you have to implement the `TestProcessDefinition` interface. It is highly recommanded to inherit from `AbstractTestProcessDefinition`:
+Before you can use a test-process, you will have to define it. To do so, you have to implement the `TestProcessDefinition` interface. Inheriting from `AbstractTestProcessDefinition`, while not mandatory, is highly recommended:
 
 ```java
 @Component
@@ -144,7 +144,7 @@ public void testUsingTheBeanName() {
 
 ### Test process lifecycle
 
-Using the `@TestProcess` annotation wil have TestProcesses start the targetted `TestProcessDefinition` and make sure it is running before starting the annotated test method. By default, the test process will be left running so that it can be reused by multiple test methods. This avoids stopping and re-starting test processes between test methods, which significantly speeds up testing.
+Using the `@TestProcess` annotation will have TestProcesses start the targetted `TestProcessDefinition` and make sure it is running before starting the annotated test method. By default, the test process will be left running so that it can be reused by multiple test methods. This avoids stopping and re-starting test processes between test methods, which significantly speeds up testing.
 
 If you need more control over when a test process is stopped and/or restarted, you can specify that in the annotation:
 
@@ -174,7 +174,7 @@ For even more fine-grained control, you will need to [use the API](#using-the-ap
 
 ### Test process identifiers
 
-Each test process definition needs to provide a test process identifier. Identifiers are used as unique keys for detecting wheter a test process is already running or not: whenever a provess with the same identifier is already running, the running process is stopped first before the new one is started, even if the default `StopStrategy.LEAVE_RUNNING` is used.
+Each test process definition needs to provide a test process identifier. Identifiers are used as unique keys for detecting wheter a test process is already running or not: whenever a process with the same identifier is already running, the running process is stopped first before the new one is started, even if the default `StopStrategy.LEAVE_RUNNING` is used.
 
 This enables you to have multiple mutually exclusive `TestProcessDefinition` implementations out of which *at most one* will be running at any time.
 
