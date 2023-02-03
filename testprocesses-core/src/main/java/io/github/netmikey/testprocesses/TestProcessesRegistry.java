@@ -250,15 +250,6 @@ public class TestProcessesRegistry {
 
         Optional<Long> streamFileStartPositionOfCurrentTest = streamPositionRetriever.apply(runningTestProcess);
 
-        if (StreamStart.CURRENT_TEST.equals(streamStart)
-            && streamFileStartPositionOfCurrentTest.isEmpty()) {
-            throw new IllegalStateException(
-                "Test process " + runningTestProcess.getDefinition().getProcessIdentifier()
-                    + " defined in bean " + runningTestProcess.getDefinition()
-                    + " seems to be running but does not have the current test's start position on its "
-                    + streamDescription + " marked. This shouldn't happen.");
-        }
-
         try {
             /*
              * Open new channel, seek to the position in it where the current
