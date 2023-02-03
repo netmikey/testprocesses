@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+import java.util.concurrent.TimeoutException;
 
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -17,12 +18,16 @@ import io.github.netmikey.testprocesses.TestProcessDefinition;
 import io.github.netmikey.testprocesses.TestProcessDefinitionBy;
 import io.github.netmikey.testprocesses.TestProcessState;
 import io.github.netmikey.testprocesses.TestProcessesRegistry;
+import io.github.netmikey.testprocesses.eventdetector.LogPatternEventDetector;
 
 /**
  * Utility method for asserting and interacting with those test processes
  * specifically created for these framework-tests.
  */
 public class TestHelper {
+
+    private static final TestProcessDefinitionBy<EchoTestProcess> ECHO_TEST_PROCESS = TestProcessDefinitionBy
+        .clazz(EchoTestProcess.class);
 
     /**
      * Sends a line of test to the {@link EchoTestProcess} currently running in
@@ -35,7 +40,7 @@ public class TestHelper {
      */
     public static void sendToEchoProcess(TestProcessesRegistry registry, String line) {
         Optional<RunningTestProcess<EchoTestProcess>> runningProcess = registry
-            .retrieveRunningProcess(TestProcessDefinitionBy.clazz(EchoTestProcess.class));
+            .retrieveRunningProcess(ECHO_TEST_PROCESS);
 
         if (runningProcess.isPresent()) {
             try {
@@ -55,6 +60,14 @@ public class TestHelper {
                 writer.flush();
             } catch (IOException e) {
                 throw new UncheckedIOException(e.getMessage(), e);
+            }
+
+            // Wait for the line to appear on the echo process' stdOut
+            try {
+                registry.waitForEventOn(ECHO_TEST_PROCESS, LogPatternEventDetector.onStdOut().withMarker(line));
+            } catch (TimeoutException e) {
+                throw new RuntimeException("Timeout while waiting for the line to appear on the EchoProcess' stdOut",
+                    e);
             }
         } else {
             throw new IllegalStateException("Trying to write to " + EchoTestProcess.class.getName()
