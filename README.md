@@ -55,9 +55,17 @@ TestProcesses enables managing one or more of these "test processes" for your te
 
 ## Requirements
 
-- Java 11 or above
+In order to use TestProcesses, currently you must be using:
+
 - JUnit Jupiter
-- You must be using Spring Test (ideally `spring-boot-starter-test`)
+- Spring Test (ideally `spring-boot-starter-test`)
+
+The following table describes the version compatibilities:
+
+| TestProcesses Version | Min. Java Version | Spring Boot Version |
+|-----------------------|-------------------|---------------------|
+| 1.x                   | 11                | 2.x                 |
+| 2.x                   | 17                | 3.x                 |
 
 
 ## Installation

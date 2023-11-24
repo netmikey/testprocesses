@@ -18,9 +18,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +27,8 @@ import org.springframework.test.context.TestContext;
 
 import io.github.netmikey.testprocesses.eventdetector.EventDetector;
 import io.github.netmikey.testprocesses.utils.StreamStart;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 
 /**
  * A registry that holds all defined processes.

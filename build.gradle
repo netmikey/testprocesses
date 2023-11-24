@@ -1,16 +1,18 @@
 
 allprojects {
     group = "io.github.netmikey.testprocesses"
-    version = "1.0.2-SNAPSHOT"
+    version = "2.0.0-SNAPSHOT"
 }
 
 subprojects {
     apply plugin: 'java-library'
 
-    sourceCompatibility = 11
+    java {
+        sourceCompatibility = 17
+    }
 
     ext {
-        springBootVersion = '2.7.6' // https://search.maven.org/artifact/org.springframework.boot/spring-boot-dependencies
+        springBootVersion = '3.2.0' // https://search.maven.org/artifact/org.springframework.boot/spring-boot-dependencies
     }
 
     repositories {
