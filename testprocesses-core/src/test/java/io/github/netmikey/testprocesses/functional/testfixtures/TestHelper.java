@@ -87,6 +87,17 @@ public class TestHelper {
     }
 
     /**
+     * Assert the {@link EchoTestProcess} is currently running using its process
+     * identifier for the lookup.
+     * 
+     * @param registry
+     *            The registry on which the lookup should be performed.
+     */
+    public static void assertEchoRunningByProcessIdentifier(TestProcessesRegistry registry) {
+        assertRunningByProcessIdentifier(registry, EchoTestProcess.PROCESS_IDENTIFIER);
+    }
+
+    /**
      * Assert the {@link TestProcessDefinition} is currently running using its
      * class for the lookup.
      * 
@@ -100,6 +111,23 @@ public class TestHelper {
 
         RunningTestProcess<?> runningEchoProcess = registry.retrieveRunningProcess(clazz(clazz))
             .orElseThrow(() -> new AssertionFailedError(clazz.getSimpleName() + " should have been started"));
+        Assertions.assertEquals(TestProcessState.STARTED, runningEchoProcess.getDefinition().getActualState());
+    }
+
+    /**
+     * Assert the {@link TestProcessDefinition} is currently running using its
+     * process identifier for the lookup.
+     * 
+     * @param registry
+     *            The registry on which the lookup should be performed.
+     * @param processIdentifier
+     *            The process identifier to be looked up.
+     */
+    public static void assertRunningByProcessIdentifier(TestProcessesRegistry registry, String processIdentifier) {
+
+        RunningTestProcess<?> runningEchoProcess = registry.retrieveRunningProcess(processIdentifier(processIdentifier))
+            .orElseThrow(() -> new AssertionFailedError(
+                "process with identifier `" + processIdentifier + "` should have been started"));
         Assertions.assertEquals(TestProcessState.STARTED, runningEchoProcess.getDefinition().getActualState());
     }
 

@@ -35,6 +35,8 @@ public class TestProcessDefinitionBy<T extends TestProcessDefinition> {
 
     private Optional<String> beanName = Optional.empty();
 
+    private Optional<String> processIdentifier = Optional.empty();
+
     /**
      * Address a test process definition by its concrete type.
      * 
@@ -83,6 +85,23 @@ public class TestProcessDefinitionBy<T extends TestProcessDefinition> {
     }
 
     /**
+     * Address a test process definition by its process identifier.
+     * 
+     * @param testProcessIdentifier
+     *            The identifier returned by
+     *            {@link TestProcessDefinition#getProcessIdentifier()}.
+     * @return The {@link TestProcessDefinitionBy} reference to the test process
+     *         with the specified testProcessIdentifier.
+     */
+    public static TestProcessDefinitionBy<? extends TestProcessDefinition> processIdentifier(
+        String testProcessIdentifier) {
+
+        TestProcessDefinitionBy<? extends TestProcessDefinition> result = new TestProcessDefinitionBy<>();
+        result.processIdentifier = Optional.of(testProcessIdentifier);
+        return result;
+    }
+
+    /**
      * Get the clazz.
      * 
      * @return Returns the clazz.
@@ -109,4 +128,12 @@ public class TestProcessDefinitionBy<T extends TestProcessDefinition> {
         return beanName;
     }
 
+    /**
+     * Get the processIdentifier.
+     * 
+     * @return Returns the processIdentifier.
+     */
+    public Optional<String> getProcessIdentifier() {
+        return processIdentifier;
+    }
 }

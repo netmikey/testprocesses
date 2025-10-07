@@ -15,6 +15,11 @@ import io.github.netmikey.testprocesses.eventdetector.LogPatternEventDetector;
 public class EchoTestProcess extends AbstractTestProcessDefinition {
 
     /**
+     * The process identifier.
+     */
+    public static String PROCESS_IDENTIFIER = "echo-process";
+
+    /**
      * Default constructor.
      */
     public EchoTestProcess() {
@@ -29,6 +34,6 @@ public class EchoTestProcess extends AbstractTestProcessDefinition {
 
     @Override
     public String getProcessIdentifier() {
-        return "echo-process";
+        return PROCESS_IDENTIFIER;
     }
 }

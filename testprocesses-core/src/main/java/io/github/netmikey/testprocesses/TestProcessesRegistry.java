@@ -357,6 +357,60 @@ public class TestProcessesRegistry {
                     .findFirst()
                     .get();
             }
+        } else if (testProcessDefinitionBy.getProcessIdentifier().isPresent()) {
+            String processIdentifier = testProcessDefinitionBy.getProcessIdentifier().get();
+
+            // First, try to find a match within the currently running processes
+            Map<String, T> matchingRunning = runningProcesses.entrySet().stream()
+                .filter(p -> processIdentifier.equals(p.getValue().getDefinition().getProcessIdentifier()))
+                .collect(Collectors.toMap(
+                    e -> "instance " + e.getValue().getDefinition() + " with identifier "
+                        + e.getValue().getDefinition().getProcessIdentifier(),
+                    e -> (T) e.getValue().getDefinition()));
+
+            // Note that this shouldn't happen as only one process with a given
+            // processIdentifier should run at any time, but check for good
+            // measure...
+            if (matchingRunning.size() > 1) {
+                throw new TooManyTestProcessDefinitionsException("More than one TestProcessDefinition bean with "
+                    + "identifier " + processIdentifier + " were found to be running. Consider referencing your "
+                    + "test process using the class, instance or bean name rather than the process identifier. "
+                    + "Found beans were: " + matchingRunning.keySet().stream().collect(Collectors.joining(", ")));
+            }
+
+            if (matchingRunning.size() == 1) {
+                result = matchingRunning.values()
+                    .stream()
+                    .findFirst()
+                    .get();
+            } else {
+                // If no matching definition is running, try to find a matching
+                // Spring bean
+
+                Map<String, T> matchingBeans = testProcessDefinitionBeans.entrySet().stream()
+                    .filter(b -> processIdentifier.equals(b.getValue().getProcessIdentifier()))
+                    .collect(Collectors.toMap(e -> e.getKey(), e -> (T) e.getValue()));
+
+                if (matchingBeans.size() == 0) {
+                    throw new UnknownTestProcessDefinitionException(
+                        "No " + TestProcessDefinition.class.getSimpleName() + " with identifier "
+                            + processIdentifier + " could be found. Make sure you have a bean of type "
+                            + TestProcessDefinition.class.getSimpleName()
+                            + "that uses this identifier in your Spring Test-Context.");
+                }
+
+                if (matchingBeans.size() > 1) {
+                    throw new TooManyTestProcessDefinitionsException("More than one TestProcessDefinition "
+                        + "bean with identifier " + processIdentifier + " were found. Consider referencing it "
+                        + "using its class, the instance or bean name rather than the process identifier. "
+                        + "Found beans were: " + matchingBeans.keySet().stream().collect(Collectors.joining(", ")));
+                }
+
+                result = matchingBeans.values()
+                    .stream()
+                    .findFirst()
+                    .get();
+            }
         } else {
             result = testProcessDefinitionBy.getInstance().get();
         }

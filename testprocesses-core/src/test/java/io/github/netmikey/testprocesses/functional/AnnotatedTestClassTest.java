@@ -34,7 +34,8 @@ public class AnnotatedTestClassTest {
      * should be running. The execution order may vary and is not important.
      */
     @Test
-    public void anotherTestWereTestProcessShouldBeRunning() {
+    public void anotherTestWhereTestProcessShouldBeRunning() {
         assertEchoRunningByClass(registry);
+        assertEchoRunningByProcessIdentifier(registry);
     }
 }
