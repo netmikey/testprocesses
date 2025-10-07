@@ -2,6 +2,14 @@
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.net.http.HttpRequest.BodyPublishers
+import java.net.http.HttpResponse.BodyHandlers
+import java.util.Base64
+
 // Configure these in your $USER_HOME/.gradle/gradle.properties
 if (!project.hasProperty("sonatypeUsername")) {
     ext.sonatypeUsername = ''
@@ -67,7 +75,7 @@ publishing {
 
     repositories {
         maven {
-            url = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            url = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
             credentials {
                 username = sonatypeUsername
                 password = sonatypePassword
@@ -80,3 +88,31 @@ signing {
     useGpgCmd()
     sign publishing.publications.mavenJava
 }
+
+task finalizeMavenCentralPublish() {
+    doLast {
+        println "Finalizing maven central publish..."
+        def url = 'https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/io.github.netmikey'
+
+        def client = HttpClient.newHttpClient()
+
+        def auth = "${sonatypeUsername}:${sonatypePassword}"
+        def encodedAuth = Base64.encoder.encodeToString(auth.bytes)
+        def authHeader = "Basic ${encodedAuth}"
+
+        def request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .header("Authorization", authHeader)
+                .POST(BodyPublishers.ofString(""))
+                .build()
+
+        def response = client.send(request, BodyHandlers.ofString())
+
+        println "Response Code: ${response.statusCode()}"
+        println "Response Body:\n${response.body()}"
+        println "Don't forget to publish the deployment on https://central.sonatype.com/publishing/deployments"
+    }
+}
+
+publish.finalizedBy(finalizeMavenCentralPublish)
