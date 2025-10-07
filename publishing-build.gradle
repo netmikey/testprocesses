@@ -20,8 +20,8 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
-artifacts {
-    archives javadocJar, sourcesJar
+tasks.named("assemble") {
+    dependsOn(javadocJar, sourcesJar)
 }
 
 publishing {
@@ -67,10 +67,10 @@ publishing {
 
     repositories {
         maven {
-            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            url = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
             credentials {
-                username sonatypeUsername
-                password sonatypePassword
+                username = sonatypeUsername
+                password = sonatypePassword
             }
         }
     }
