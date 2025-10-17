@@ -249,6 +249,23 @@ public class MyTest {
 For more examples, see the [functional tests](https://github.com/netmikey/testprocesses/tree/main/testprocesses-core/src/test/java/io/github/netmikey/testprocesses/functional) in the `testprocesses-core` module.
 
 
+### Automatically logging a process' stdOut/stdErr streams
+
+Testprocesses can automatically log the content of a test process' stdOut/stdErr streams. This can be done in 2 ways.
+
+To log the full stdOut/stdErr streams of each process when it terminates, you can set the logger `io.github.netmikey.testprocesses.TestProcessesRegistry` to the `TRACE` level. This is useful to obtain diagnostic information if a process crashes on startup.
+
+Alternatively, you can extend your test(s) with the `io.github.netmikey.testprocesses.extensions.LogTestProcessesOutputExtension` JUnit Jupiter extension. This logs only the part of each process' stdOut/stdErr streams after each test that was emitted during that test. This is useful to associate the part of a testprocess' output with the exact test that caused it.
+
+```java
+@SpringBootTest
+@ExtendWith(LogTestProcessesOutputExtension.class)
+@TestProcess(SomeTestProcessDefinition.class)
+public class MyTest {
+    // ...
+}
+```
+
 ## Limitations
 
 Because the framework tries to reuse running test processes between tests (if not told otherwise), a test process becomes a shared resource and is, by nature, quite stateful. Because of this, running tests in parallel will most probably not behave as expected.
