@@ -84,9 +84,11 @@ publishing {
     }
 }
 
-signing {
-    useGpgCmd()
-    sign publishing.publications.mavenJava
+if (!project.hasProperty('noSigning')) {
+    signing {
+        useGpgCmd()
+        sign publishing.publications.mavenJava
+    }
 }
 
 task finalizeMavenCentralPublish() {
