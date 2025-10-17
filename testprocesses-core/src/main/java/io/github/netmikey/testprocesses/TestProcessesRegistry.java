@@ -10,8 +10,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BiFunction;
@@ -439,6 +441,16 @@ public class TestProcessesRegistry {
         } catch (UnknownTestProcessDefinitionException e) {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Retrieve a momentary snapshot of all running processes as a {@link Set}
+     * of their process identifiers.
+     * 
+     * @return A potentially empty {@link Set} of process identifiers.
+     */
+    public Set<String> runningProcessIdentifiers() {
+        return new HashSet<>(runningProcesses.keySet());
     }
 
     private <T extends TestProcessDefinition> RunningTestProcess<T> retrieveRunningProcessOrElseThrow(
