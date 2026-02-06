@@ -1,15 +1,9 @@
 package io.github.netmikey.testprocesses;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.nio.channels.Channels;
-import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -17,7 +11,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -28,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.context.TestContext;
 
 import io.github.netmikey.testprocesses.eventdetector.EventDetector;
+import io.github.netmikey.testprocesses.utils.StreamPrintingUtils;
 import io.github.netmikey.testprocesses.utils.StreamStart;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -212,9 +206,8 @@ public class TestProcessesRegistry {
      * @return The current part of the stdOut stream.
      */
     public InputStream stdOutOf(TestProcessDefinitionBy<?> testProcessDefinitionBy, StreamStart streamStart) {
-        return streamOf(testProcessDefinitionBy, streamStart, "stdOut stream",
-            FileBackedOutErrStreams::getOutFile,
-            RunningTestProcess::getCurrentTestStdOutStart);
+        return StreamPrintingUtils.stdOutStreamOf(retrieveRunningProcessOrElseThrow(testProcessDefinitionBy),
+            streamStart);
     }
 
     /**
@@ -228,46 +221,8 @@ public class TestProcessesRegistry {
      * @return The current part of the stdErr stream.
      */
     public InputStream stdErrOf(TestProcessDefinitionBy<?> testProcessDefinitionBy, StreamStart streamStart) {
-        return streamOf(testProcessDefinitionBy, streamStart, "stdErr stream",
-            FileBackedOutErrStreams::getErrFile,
-            RunningTestProcess::getCurrentTestStdErrStart);
-    }
-
-    private InputStream streamOf(TestProcessDefinitionBy<?> testProcessDefinitionBy, StreamStart streamStart,
-        String streamDescription, Function<FileBackedOutErrStreams, Optional<Path>> streamFileRetriever,
-        Function<RunningTestProcess<?>, Optional<Long>> streamPositionRetriever) {
-
-        RunningTestProcess<?> runningTestProcess = retrieveRunningProcessOrElseThrow(testProcessDefinitionBy);
-        if (!(runningTestProcess.getDefinition() instanceof FileBackedOutErrStreams)) {
-            throw new IllegalStateException("TestProcessDefinition class must implement "
-                + FileBackedOutErrStreams.class + " in order to access its streams");
-        }
-        Path streamFile = streamFileRetriever.apply((FileBackedOutErrStreams) runningTestProcess.getDefinition())
-            .orElseThrow(() -> new IllegalStateException(
-                "Test process " + runningTestProcess.getDefinition().getProcessIdentifier()
-                    + " defined in bean " + runningTestProcess.getDefinition()
-                    + " seems to be running but does not have an " + streamDescription
-                    + " assigned to it yet. This shouldn't happen."));
-
-        Optional<Long> streamFileStartPositionOfCurrentTest = streamPositionRetriever.apply(runningTestProcess);
-
-        try {
-            /*
-             * Open new channel, seek to the position in it where the current
-             * test started, and return a new InputStream from this position to
-             * the end of the file.
-             */
-            SeekableByteChannel streamFileChannel = Files.newByteChannel(streamFile, StandardOpenOption.READ);
-            if (StreamStart.CURRENT_TEST.equals(streamStart)
-                && streamFileStartPositionOfCurrentTest.isPresent()) {
-
-                streamFileChannel.position(streamFileStartPositionOfCurrentTest.get());
-            }
-            return Channels.newInputStream(streamFileChannel);
-        } catch (IOException e) {
-            throw new UncheckedIOException("Error opening new InputStream to process' "
-                + streamDescription + ": " + e.getMessage(), e);
-        }
+        return StreamPrintingUtils.stdErrStreamOf(retrieveRunningProcessOrElseThrow(testProcessDefinitionBy),
+            streamStart);
     }
 
     /**
@@ -496,32 +451,11 @@ public class TestProcessesRegistry {
                 LOG.warn("Timeout while waiting for process " + runningProcess.getDefinition().getProcessIdentifier()
                     + " to finish shutting down. The process may not have stopped correctly. " + e.getMessage());
             }
-            debugOutErrFiles(runningProcess.getDefinition());
+            if (LOG.isTraceEnabled()) {
+                StreamPrintingUtils.printOutAndErrStreams(runningProcess, StreamStart.ABSOLUTE);
+            }
         }
         runningProcesses.remove(processIdentifier);
-    }
-
-    private void debugOutErrFiles(TestProcessDefinition testProcessDefinition) {
-        if (LOG.isTraceEnabled() && testProcessDefinition instanceof FileBackedOutErrStreams) {
-            FileBackedOutErrStreams testProcess = (FileBackedOutErrStreams) testProcessDefinition;
-            testProcess.getOutFile().ifPresent(outFile -> {
-                try (InputStream fis = new FileInputStream(outFile.toFile())) {
-                    System.out.println("-------------------- stdout --------------------");
-                    fis.transferTo(System.out);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-            testProcess.getErrFile().ifPresent(errFile -> {
-                try (InputStream fis = new FileInputStream(errFile.toFile())) {
-                    System.out.println("-------------------- stderr --------------------");
-                    fis.transferTo(System.out);
-                    System.out.println("------------------------------------------------");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
     }
 
     private boolean isRunning(RunningTestProcess<?> runningProcess) {

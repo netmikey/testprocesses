@@ -12,7 +12,7 @@ subprojects {
     }
 
     ext {
-        springBootVersion = '3.5.5' // https://search.maven.org/artifact/org.springframework.boot/spring-boot-dependencies
+        springBootVersion = '3.5.10' // https://central.sonatype.com/artifact/org.springframework.boot/spring-boot-dependencies/versions
     }
 
     repositories {
