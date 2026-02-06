@@ -75,8 +75,8 @@ public class StreamPrintingUtils {
         try (var reader = new BufferedReader(new InputStreamReader(processStream))) {
             if (processStream.available() > 0) {
                 String title = " %s %s ".formatted(ClassUtils.getAbbreviatedName(processIdentifier, 59), streamName);
-                String headerRow = "┏" + "━".repeat(5) +
-                    title + "━".repeat(80 - 6 - title.length());
+                String headerRow = "/" + "-".repeat(5) +
+                    title + "-".repeat(80 - 6 - title.length());
 
                 outStream.println("\n" + headerRow);
 
@@ -85,7 +85,7 @@ public class StreamPrintingUtils {
                     .map(line -> "  " + line)
                     .forEach(System.out::println);
 
-                outStream.println("┗" + "━".repeat(headerRow.length() - 1));
+                outStream.println("\\" + "-".repeat(headerRow.length() - 1));
             }
         } catch (IOException e) {
             e.printStackTrace();
